@@ -412,9 +412,10 @@ dviPredictions = function( ss, trimNAs=TRUE, ... )
 
 maPredictions = function( ss, maType=SMA, ... )
 {
-   ma = na.trim( maType( Cl( ss ), ... ) )
+   cl = Cl( ss )
+   ma = na.trim( maType( cl, ... ) )
 
-   merged = merge( ss, ma, all=F )
+   merged = merge( cl, ma, all=F )
 
    mm = merged[,1] - merged[,2]
 
@@ -423,8 +424,8 @@ maPredictions = function( ss, maType=SMA, ... )
 
    sig = sigUp + sigDown
 
-   res = merge( reclass( sig, ss ), sigUp, sigDown )
-   colnames( res ) = c( "Indicator", "Up", "Down" )
+   res = merge( reclass( sig, ss ), sigUp, sigDown, lag( merged[,1] ), lag( merged[,2] ) )
+   colnames( res ) = c( "Indicator", "Up", "Down", "Close", "MA" )
 
    return( res )
 }
