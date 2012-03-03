@@ -360,7 +360,8 @@ computeMAActionPar = function( x, maType=SMA, step=0.01, range=5, trace=F, cores
 
 rsiPredictions = function( ss, trimNAs=TRUE, ... )
 {
-   rsi = RSI( Cl( ss ), ... )
+   cl = Cl( ss )
+   rsi = RSI( cl, ... )
 
    sigUp = lag( ifelse( rsi < 10, 1, 0 ), 1 )
    sigDown = lag( ifelse( rsi > 90, -1, 0 ), 1 )
@@ -378,15 +379,16 @@ rsiPredictions = function( ss, trimNAs=TRUE, ... )
 
    sig = sigUp + sigDown
 
-   res = merge( reclass( sig, ss ), sigUp, sigDown )
-   colnames( res ) = c( "Indicator", "Up", "Down" )
+   res = merge( reclass( sig, ss ), sigUp, sigDown, lag( rsi[,1] ) )
+   colnames( res ) = c( "Indicator", "Up", "Down", "RSI" )
 
    return( res )
 }
 
 dviPredictions = function( ss, trimNAs=TRUE, ... )
 {
-   dvi = DVI( Cl( ss ), ... )
+   cl = Cl( ss )
+   dvi = DVI( cl, ... )
 
    sigUp = lag( ifelse( dvi$dvi < 0.5, 1, 0 ), 1 )
    sigDown = lag( ifelse( dvi$dvi > 0.5, -1, 0 ), 1 )
@@ -404,8 +406,8 @@ dviPredictions = function( ss, trimNAs=TRUE, ... )
 
    sig = sigUp + sigDown
 
-   res = merge( reclass( sig, ss ), sigUp, sigDown )
-   colnames( res ) = c( "Indicator", "Up", "Down" )
+   res = merge( reclass( sig, ss ), sigUp, sigDown, lag( dvi$dvi ) )
+   colnames( res ) = c( "Indicator", "Up", "Down", "DVI" )
 
    return( res )
 }
